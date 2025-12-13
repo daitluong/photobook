@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photobook</title>
-    <link rel="stylesheet" href="node_modules/angular-material/angular-material.css">
+    
+    <!-- Angular Material CSS from CDN -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.5/angular-material.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body ng-controller="MainController" layout="column">
     <md-toolbar class="md-primary">
         <div class="md-toolbar-tools">
-            <h1 flex>Photobook</h1>
+            <h1 flex>LDAP Directory</h1>
             <md-button class="md-icon-button" ng-click="toggleMenu()" aria-label="Menu">
                 <md-icon>menu</md-icon>
             </md-button>
@@ -23,80 +25,73 @@
             <md-content>
                 <md-list>
                     <md-list-item>
-                        <md-button ng-click="loadPhotos()" class="md-raised">Load Photos</md-button>
+                        <md-button ng-click="loadUsers()" class="md-raised">Refresh Users</md-button>
                     </md-list-item>
                     <md-list-item>
-                        <md-button ng-click="openAddPhoto()" class="md-raised md-primary">Add Photo</md-button>
+                        <md-input-container class="md-block">
+                            <label>Search Users</label>
+                            <input ng-model="searchQuery" ng-change="loadUsers()" type="text" placeholder="Name, email, username...">
+                        </md-input-container>
+                    </md-list-item>
+                    <md-list-item>
+                        <p class="md-body-1">Total Users: {{users.length}}</p>
                     </md-list-item>
                 </md-list>
             </md-content>
         </md-sidenav>
 
         <md-content flex layout-padding>
-            <h2>Photos</h2>
+            <h2>LDAP Users ({{users.length}})</h2>
+            
+            <div ng-if="initStatus" style="color: blue; padding: 10px; background: #e3f2fd; margin-bottom: 10px;">
+                {{initStatus}}
+            </div>
             
             <div ng-if="loading" layout-align="center center">
                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>
             </div>
 
-            <div ng-if="!loading && photos.length === 0" class="empty-state">
-                <p>No photos found. Add one to get started!</p>
+            <div ng-if="!loading && users.length === 0" class="empty-state">
+                <p>No users found.</p>
             </div>
 
             <div layout="row" layout-wrap>
-                <md-card ng-repeat="photo in photos" class="photo-card" flex="33">
-                    <md-card-header>
-                        <md-card-avatar>
-                            <img class="md-user-avatar" src="https://via.placeholder.com/40">
-                        </md-card-avatar>
-                        <md-card-header-text>
-                            <span class="md-title">{{photo.title}}</span>
-                        </md-card-header-text>
+                <md-card ng-repeat="user in users" class="user-card" flex="25">
+                    <md-card-header layout="column" layout-align="center center">
+                        <div ng-if="user.profilePicture" class="user-avatar">
+                            <img ng-src="{{user.profilePicture}}" alt="{{user.displayName}}" title="{{user.displayName}}">
+                        </div>
+                        <div ng-if="!user.profilePicture" class="user-avatar-placeholder">
+                            <span class="initials">{{user.firstName[0]}}{{user.lastName[0]}}</span>
+                        </div>
                     </md-card-header>
-                    <img src="{{photo.url}}" class="md-card-image" alt="{{photo.title}}">
-                    <md-card-content>
-                        <p>{{photo.description}}</p>
-                        <p class="md-body-2">{{photo.createdAt | date:'short'}}</p>
+                    <md-card-content layout="column">
+                        <h3 class="md-headline">{{user.displayName}}</h3>
+                        <p class="md-body-2">
+                            <strong>Username:</strong> {{user.uid}}
+                        </p>
+                        <p class="md-body-2" ng-if="user.email">
+                            <strong>Email:</strong> {{user.email}}
+                        </p>
+                        <p class="md-body-2" ng-if="user.title">
+                            <strong>Title:</strong> {{user.title}}
+                        </p>
+                        <p class="md-body-2" ng-if="user.mobile">
+                            <strong>Mobile:</strong> {{user.mobile}}
+                        </p>
                     </md-card-content>
-                    <md-card-actions layout="row" layout-align="end center">
-                        <md-button class="md-icon-button" ng-click="deletePhoto(photo.id)" aria-label="Delete">
-                            <md-icon>delete</md-icon>
-                        </md-button>
-                    </md-card-actions>
                 </md-card>
             </div>
         </md-content>
     </div>
 
-    <!-- Add Photo Dialog -->
-    <md-dialog id="addPhotoDialog" class="add-photo-dialog">
-        <md-dialog-content>
-            <h2>Add New Photo</h2>
-            <form name="photoForm">
-                <md-input-container class="md-block">
-                    <label>Title</label>
-                    <input ng-model="newPhoto.title" required>
-                </md-input-container>
-                <md-input-container class="md-block">
-                    <label>Description</label>
-                    <textarea ng-model="newPhoto.description" rows="4"></textarea>
-                </md-input-container>
-                <md-input-container class="md-block">
-                    <label>Image URL</label>
-                    <input ng-model="newPhoto.url" required>
-                </md-input-container>
-            </form>
-        </md-dialog-content>
-        <md-dialog-actions layout="row">
-            <md-button ng-click="cancelAddPhoto()">Cancel</md-button>
-            <md-button ng-click="savePhoto()" class="md-primary">Save</md-button>
-        </md-dialog-actions>
-    </md-dialog>
-
-    <script src="node_modules/angular/angular.js"></script>
-    <script src="node_modules/angular-animate/angular-animate.js"></script>
-    <script src="node_modules/angular-aria/angular-aria.js"></script>
-    <script src="node_modules/angular-material/angular-material.js"></script>
+    <!-- AngularJS and Material from CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.5/angular-material.min.js"></script>
+    
+    <!-- Application script -->
     <script src="js/app.js"></script>
 </body>
 </html>

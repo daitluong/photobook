@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html ng-app="photobookApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Console</title>
+    <style>
+        body { font-family: monospace; margin: 20px; }
+        #console { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; background: #f5f5f5; }
+        .log { color: black; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body ng-controller="MainController">
+    <h1>Debug Console</h1>
+    <div id="console"></div>
+    <button onclick="location.href='/'">Back to Main</button>
+
+    <!-- AngularJS and Material from CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.5/angular-material.min.js"></script>
+    
+    <script>
+        var logs = [];
+        
+        // Capture console logs
+        var originalLog = console.log;
+        var originalError = console.error;
+        
+        console.log = function() {
+            logs.push({type: 'log', msg: Array.prototype.slice.call(arguments).join(' ')});
+            originalLog.apply(console, arguments);
+            updateConsole();
+        };
+        
+        console.error = function() {
+            logs.push({type: 'error', msg: Array.prototype.slice.call(arguments).join(' ')});
+            originalError.apply(console, arguments);
+            updateConsole();
+        };
+        
+        function updateConsole() {
+            var el = document.getElementById('console');
+            el.innerHTML = logs.map(function(l) {
+                return '<div class="' + l.type + '">' + l.msg + '</div>';
+            }).join('');
+            el.scrollTop = el.scrollHeight;
+        }
+    </script>
+    
+    <!-- Application script -->
+    <script src="js/app.js"></script>
+</body>
+</html>

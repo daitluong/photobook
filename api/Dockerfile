@@ -20,8 +20,8 @@ RUN dotnet publish "PhotobookAPI.csproj" -c Release -o /app/publish /p:UseAppHos
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-# Install curl for health checks
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Install curl and ldap-utils for health checks and LDAP queries
+RUN apt-get update && apt-get install -y curl ldap-utils && rm -rf /var/lib/apt/lists/*
 
 # Copy from build stage
 COPY --from=build /app/publish .

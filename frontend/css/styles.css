@@ -4,6 +4,45 @@ body {
     padding: 0;
 }
 
+.user-card {
+    margin: 10px;
+    text-align: center;
+}
+
+.user-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 10px auto;
+    border: 3px solid #e0e0e0;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 10px auto;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    border: 3px solid #e0e0e0;
+}
+
+.initials {
+    text-transform: uppercase;
+}
+
 .photo-card {
     margin: 10px;
     min-height: 400px;
@@ -31,8 +70,28 @@ md-content {
 
 md-input-container {
     width: 100%;
+    padding: 10px;
 }
 
 .add-photo-dialog {
     min-width: 400px;
+}
+
+/* Responsive layout */
+@media (max-width: 1200px) {
+    .user-card {
+        flex: 0 0 33.333% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .user-card {
+        flex: 0 0 50% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .user-card {
+        flex: 0 0 100% !important;
+    }
 }
