@@ -1,0 +1,43 @@
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# .NET
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+.vs/
+.vscode/
+*.user
+
+# Node
+node_modules/
+dist/
+build/
+.angular/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# LDAP
+slapd.pid
+ldapdb.lock
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Volumes
+ldap_data/
+ldap_config/

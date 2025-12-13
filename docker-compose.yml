@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # LDAP Container - Active Directory
+  ldap:
+    build:
+      context: ./ldap
+      dockerfile: Dockerfile
+    container_name: photobook-ldap
+    environment:
+      LDAP_ORGANISATION: "Photobook"
+      LDAP_DOMAIN: "photobook.local"
+      LDAP_ADMIN_PASSWORD: "admin123"
+      LDAP_CONFIG_PASSWORD: "config123"
+      LDAP_BASE_DN: "dc=photobook,dc=local"
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+      - ./ldap/init.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/init.ldif
+    networks:
+      - photobook-network
+    healthcheck:
+      test: ["CMD", "ldapwhoami", "-H", "ldap://localhost", "-D", "cn=admin,dc=photobook,dc=local", "-w", "admin123"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # .NET Core 8.0 API Container
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: photobook-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:5000"
+      LDAP_SERVER: "ldap"
+      LDAP_PORT: "389"
+      LDAP_BASE_DN: "dc=photobook,dc=local"
+      LDAP_ADMIN_DN: "cn=admin,dc=photobook,dc=local"
+      LDAP_ADMIN_PASSWORD: "admin123"
+    ports:
+      - "5000:5000"
+    depends_on:
+      ldap:
+        condition: service_healthy
+    networks:
+      - photobook-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # AngularJS Frontend Container
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: photobook-frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api
+    networks:
+      - photobook-network
+    environment:
+      - API_URL=http://api:5000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4200/index.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  photobook-network:
+    driver: bridge
+
+volumes:
+  ldap_data:
+    driver: local
+  ldap_config:
+    driver: local

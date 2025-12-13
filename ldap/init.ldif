@@ -1,0 +1,68 @@
+# LDAP Configuration for OpenLDAP
+version: 1
+dn: dc=photobook,dc=local
+objectClass: dcObject
+objectClass: organization
+o: Photobook
+dc: photobook
+
+# Admin User
+dn: cn=admin,dc=photobook,dc=local
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+userPassword: {SSHA}password_hash_here
+description: LDAP Administrator
+
+# Users Organizational Unit
+dn: ou=users,dc=photobook,dc=local
+objectClass: organizationalUnit
+ou: users
+description: Users organizational unit
+
+# Groups Organizational Unit
+dn: ou=groups,dc=photobook,dc=local
+objectClass: organizationalUnit
+ou: groups
+description: Groups organizational unit
+
+# Admin Group
+dn: cn=admins,ou=groups,dc=photobook,dc=local
+objectClass: groupOfNames
+cn: admins
+description: Administrator group
+member: cn=admin,dc=photobook,dc=local
+
+# Users Group
+dn: cn=users,ou=groups,dc=photobook,dc=local
+objectClass: groupOfNames
+cn: users
+description: Standard users group
+member: cn=user1,ou=users,dc=photobook,dc=local
+member: cn=user2,ou=users,dc=photobook,dc=local
+
+# Sample User 1
+dn: cn=user1,ou=users,dc=photobook,dc=local
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+cn: user1
+sn: User
+givenName: Test
+uid: user1
+mail: user1@photobook.local
+userPassword: {SSHA}password_hash_here
+description: Test User 1
+
+# Sample User 2
+dn: cn=user2,ou=users,dc=photobook,dc=local
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+cn: user2
+sn: User
+givenName: Demo
+uid: user2
+mail: user2@photobook.local
+userPassword: {SSHA}password_hash_here
+description: Test User 2

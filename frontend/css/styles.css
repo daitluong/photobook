@@ -1,0 +1,38 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.photo-card {
+    margin: 10px;
+    min-height: 400px;
+}
+
+.photo-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    color: #999;
+}
+
+md-content {
+    background-color: #f5f5f5;
+}
+
+.md-toolbar {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+md-input-container {
+    width: 100%;
+}
+
+.add-photo-dialog {
+    min-width: 400px;
+}
